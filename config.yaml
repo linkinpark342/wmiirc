@@ -1,39 +1,10 @@
 import:
-  - display/desktop/xsetroot
-  - display/desktop/feh
-  - display/color/zenburn
-  - display/client
-  - display/tags
-  - display/status/notice
-  - display/status/weather
-  - display/status/arrange
-  - display/status/volume
-  - display/status/network
-  - display/status/disk
-  - display/status/load
-  - display/status/memory
-#  - display/status/thermal
-#  - display/status/power
-  - display/status/time
-  - control/mouse
-  - control/keyboard/qwerty
-  - control/keyboard/qwerty/arrange_by_number
-  - control/keyboard/qwerty/client
-  - control/keyboard/qwerty/detach
-  - control/keyboard/qwerty/focus_by_letter
-  - control/keyboard/qwerty/focus_by_number
-  - control/keyboard/qwerty/focus
-  - control/keyboard/qwerty/group
-  - control/keyboard/qwerty/launch
-  - control/keyboard/qwerty/layout_by_number
-  - control/keyboard/qwerty/layout
-  - control/keyboard/qwerty/menu
-  - control/keyboard/qwerty/move_by_number
-  - control/keyboard/qwerty/move
-  - control/keyboard/qwerty/resize
-  - control/keyboard/qwerty/swap_by_number
-  - control/keyboard/qwerty/swap
-  - control/keyboard/qwerty/zoom
+  - status/*.yaml
+  - control/*.yaml
+  - control/action/*.yaml
+  - display/*.yaml
+  - display/color/zenburn.yaml
+  - display/desktop/feh.yaml
 
 prefer:
   terminal: gnome-terminal
@@ -77,59 +48,71 @@ display:
       /^xwrits:/ tags=/./
       /^zim:/ tags=note
 
+  refresh: 30
   status:
-    arrange:
-      '@choices':
-        right_stack: |
-          tile_right
-          managed_areas.last.layout = :stack
-    time:
-      '@format': '%l:%M%P %d%b %a'
-      refresh: 30
-    volume:
-      '@mixer': Master
-    disk:
-      '@path': $HOME
-    network:
-      instances:
-        - '@interface': eth0
-          refresh: 60
-    weather:
-      '@location': SJC
-    notice:
-      control:
-        action:
-          show_desktop: focus_view '...'
-        mouse_action:
-          right_click: show_desktop
-          wheel_up: focus_next_view
-          wheel_down: focus_previous_view
+    - notice:
+        control:
+          action:
+            show_desktop: focus_view '...'
+          mouse_action:
+            right_click: show_desktop
+            wheel_up: focus_next_view
+            wheel_down: focus_previous_view
+    - arrange:
+        params:
+          choices:
+            right_stack: |
+              tile_right
+              managed_areas.last.layout = :stack
+    - weather:
+        refresh: 300
+        params:
+          location: SJC
+    - volume:
+        params:
+          mixer: Master
+    - disk:
+    - network:
+    - thermal:
+    - loadavg:
+    - battery:
+    - clock:
+        params:
+          format: '%l:%M%P %a %m/%d'
 
-script:
-  - after: |
-      launch 'witray'
-      launch 'clipit'
-      launch 'gnome-settings-daemon'
-      launch 'pidgin'
-      launch 'dropbox start'
-      launch '/home/amukherjee/bin/wallpaper.sh'
+#script:
+#  - after: |
+#      launch 'witray'
+#      launch 'clipit'
+#      launch 'gnome-settings-daemon'
+#      launch 'pidgin'
+#      launch 'dropbox start'
+#      launch '/home/amukherjee/bin/wallpaper.sh'
 
 control:
   keyboard:
-    mod:     Mod4
-    view:    Mod4-Shift-v
-    move:    Mod4-Shift
-    swap:    Mod4-r
-    group:   Mod4-g
-    layout:  Mod4-z
-    arrange: Mod4-Shift-z
-    resize:  Mod4-Control
+    root:     Mod4-
+    send:     ${root}Shift-
+    size:     ${root}Control-
+    swap:     ${root}w,
+    view:     ${root}v,
+    group:    ${root}g,
+    layout:   ${root}z,
   keyboard_action:
-    XF86Display: invert_colors
+    ${root}x:          terminal
+    ${root}i:          browser
+#    view:    Mod4-Shift-v
+#    move:    Mod4-Shift
+#    swap:    Mod4-r
+#    group:   Mod4-g
+#    layout:  Mod4-z
+#    arrange: Mod4-Shift-z
+#    resize:  Mod4-Control
   action:
-    projector: | # display through a projector
-      system 'xrandr --output VGA1 --auto --output LVDS1 --off --dpi 96'
-      system 'xset dpms force on' # wake up monitor from power saving mode
+    terminal: launch 'urxvt'
+    browser: launch 'firefox'
+    editor: launch 'gvim'
+    filer: launch 'thunar'
 
     autotop: | # recover from bad xrandr
       if system 'xrandr | fgrep -q "HDMI1 connected"'
