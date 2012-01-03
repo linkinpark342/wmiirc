@@ -1,0 +1,149 @@
+import:
+  - display/desktop/xsetroot
+  - display/desktop/feh
+  - display/color/zenburn
+  - display/client
+  - display/tags
+  - display/status/notice
+  - display/status/weather
+  - display/status/arrange
+  - display/status/volume
+  - display/status/network
+  - display/status/disk
+  - display/status/load
+  - display/status/memory
+#  - display/status/thermal
+#  - display/status/power
+  - display/status/time
+  - control/mouse
+  - control/keyboard/qwerty
+  - control/keyboard/qwerty/arrange_by_number
+  - control/keyboard/qwerty/client
+  - control/keyboard/qwerty/detach
+  - control/keyboard/qwerty/focus_by_letter
+  - control/keyboard/qwerty/focus_by_number
+  - control/keyboard/qwerty/focus
+  - control/keyboard/qwerty/group
+  - control/keyboard/qwerty/launch
+  - control/keyboard/qwerty/layout_by_number
+  - control/keyboard/qwerty/layout
+  - control/keyboard/qwerty/menu
+  - control/keyboard/qwerty/move_by_number
+  - control/keyboard/qwerty/move
+  - control/keyboard/qwerty/resize
+  - control/keyboard/qwerty/swap_by_number
+  - control/keyboard/qwerty/swap
+  - control/keyboard/qwerty/zoom
+
+prefer:
+  terminal: gnome-terminal
+  browser: firefox
+  editor: gvim
+  filer: thunar
+
+display:
+  bar: top
+  font: "xft:Sans-10"
+  border: 1
+  column:
+    mode: default
+    rule: |
+      /gimp/ -> 17+83+41
+      /chat/ -> 17+83+41
+      /.*/ -> 50+50
+  client:
+    rule: |
+      /^chromium:Chromium:Chromium Preferences$/ floating=on
+      /^chromium:Chromium:Task Manager/ floating=on
+      /^chromium:/ group=0
+      /^claws-mail:Claws-mail:Claws Mail [0-9]+\./ tags=mail
+      /^claws-mail:.+Compose message$/ floating=off
+      /^claws-mail:/ floating=on
+      /^firefox:/ group=0
+      /^gimp:/ tags=gimp
+      /^liferea:/ tags=feed
+      /:MPlayer:/ floating=on
+      /^<nil>:<nil>:Event Tester$/ floating=on # xev
+      /^pcmanfm:/ group=0
+      /^pinentry/ floating=on
+      /^rdesktop:/ tags=doze floating=on
+      /^skype:|^Pidgin:/ tags=chat allow=+activate
+      /^sonata:/ tags=1 allow=+activate
+      /Thunar:File Operation Progress/ floating=on
+      /^tkmidity/ floating=on
+      /^vncviewer:/ floating=on
+      /^xmag:/ floating=on
+      /^xmessage:/ floating=on tags=/./
+      /^xwrits:/ tags=/./
+      /^zim:/ tags=note
+
+  status:
+    arrange:
+      '@choices':
+        right_stack: |
+          tile_right
+          managed_areas.last.layout = :stack
+    time:
+      '@format': '%l:%M%P %d%b %a'
+      refresh: 30
+    volume:
+      '@mixer': Master
+    disk:
+      '@path': $HOME
+    network:
+      instances:
+        - '@interface': eth0
+          refresh: 60
+    weather:
+      '@location': SJC
+    notice:
+      control:
+        action:
+          show_desktop: focus_view '...'
+        mouse_action:
+          right_click: show_desktop
+          wheel_up: focus_next_view
+          wheel_down: focus_previous_view
+
+script:
+  - after: |
+      launch 'witray'
+      launch 'clipit'
+      launch 'gnome-settings-daemon'
+      launch 'pidgin'
+      launch 'dropbox start'
+      launch '/home/amukherjee/bin/wallpaper.sh'
+
+control:
+  keyboard:
+    mod:     Mod4
+    view:    Mod4-Shift-v
+    move:    Mod4-Shift
+    swap:    Mod4-r
+    group:   Mod4-g
+    layout:  Mod4-z
+    arrange: Mod4-Shift-z
+    resize:  Mod4-Control
+  keyboard_action:
+    XF86Display: invert_colors
+  action:
+    projector: | # display through a projector
+      system 'xrandr --output VGA1 --auto --output LVDS1 --off --dpi 96'
+      system 'xset dpms force on' # wake up monitor from power saving mode
+
+    autotop: | # recover from bad xrandr
+      if system 'xrandr | fgrep -q "HDMI1 connected"'
+        action 'desktop'
+      else
+        system 'xrandr --auto --dpi 96'
+        system 'xset dpms force on' # wake up monitor from power saving mode
+      end
+
+    portrait: | # rotate screen vertically
+      system 'xrandr -o left && xrandr --dpi 96'
+
+    landscape: | # rotate screen horizontally
+      system 'xrandr -o normal && xrandr --dpi 96'
+
+    lock: | # lock with ss
+      system 'gnome-screensaver-command --lock'
