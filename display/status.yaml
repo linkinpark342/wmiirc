@@ -1,8 +1,10 @@
 import:
-  - display/barlet
+  - control/mouse.yaml
+  - display/barlet.yaml
 
 script:
-  - before: |
+  before:
+    - |
       class StatusBarlet < Barlet
         def initialize path
           super path, :right
@@ -10,11 +12,12 @@ script:
       end
 
       class StatusBarletSandbox < Sandbox
-        def initialize name, definition, position
-          definition_key = "display:status:#{name}"
+        def initialize name, definition, instance, position, offset
+          definition_key = "status:#{name}"
+          instance_key = "display:status:#{name}##{offset}"
 
           # restore instance variables from previous session
-          if session = SESSION[definition_key]
+          if session = SESSION[instance_key]
             session.each do |variable, value|
               instance_variable_set variable, value
             end
@@ -22,18 +25,20 @@ script:
 
           # store instance variables for next session before exiting
           at_exit do
-            SESSION[definition_key] = Hash[
+            SESSION[instance_key] = Hash[
               instance_variables.map do |variable|
                 [variable, instance_variable_get(variable)]
               end
             ]
           end
 
-          # make parameters that begin with '@' in the definition hash
-          # available as instance variables for use by Ruby code therein
-          definition.each do |key, value|
-            if key.start_with? '@'
-              instance_variable_set key, value
+          # merge the instance with the standard barlet definition
+          definition = Wmiirc::Import.merge({}, definition, definition_key)
+          Wmiirc::Import.merge definition, instance, instance_key, CONFIG.origins
+
+          if params = definition['params']
+            params.each do |key, value|
+              instance_variable_set "@#{key}", value
             end
           end
 
@@ -48,11 +53,16 @@ script:
 
           # buttons appear in ASCII order of their IXP file name
           # so prepend a number to get ordered status bar applets
-          file = "#{position}-#{name}"
+          file = sprintf('%03d-%s-%d', position, name, offset)
           button = StatusBarlet.new(file)
 
-          colors_hash = CONFIG['display']['color']
           label_refresh_thread = Thread.new do
+            refresh_rate = definition['refresh'] ||
+              CONFIG['display']['refresh'] || 60
+            refresh_rate = nil if refresh_rate <= 0
+
+            colors_hash = CONFIG['display']['color']
+
             loop do
               button_label = begin
                 Array(self.label)
@@ -70,13 +80,13 @@ script:
               end
 
               button.colors = button_label.shift
-              button.label = button_label.join(' ')
+              button.label = button_label.compact.join(' ')
 
-              sleep(*Array(definition['refresh']))
+              sleep *refresh_rate
             end
           end
 
-          (class << self; self; end).class_eval do
+          singleton_class.class_eval do
             define_method :refresh do
               label_refresh_thread.wakeup if label_refresh_thread.alive?
             end
@@ -88,9 +98,8 @@ script:
 
             if actions = control['action']
               actions.each do |action_name, code|
-                handler = instance_eval "lambda {#{code}}", CONFIG.origin(
-                  code, "#{definition_key}:control:action:#{action_name}"
-                )
+                origin = CONFIG.origin(code, "#{definition_key}:control:action:#{action_name}")
+                handler = instance_eval("lambda {#{code}}", origin)
 
                 action_by_local_name[action_name] = handler
 
@@ -100,28 +109,10 @@ script:
                   Wmiirc.action action_name, &handler
                 end
 
-                # the button path suffix makes this action name unique
-                # to this particular instance of the status bar applet
+                # the offset suffix makes this action name unique to
+                # this particular instance of the status bar applet
                 # when we register the handler in the global namespace
-                Wmiirc.action action_name + button.path, &handler
-              end
-            end
-
-            if keyboard_actions = control['keyboard_action']
-              keyboard_actions.each do |key, action_name|
-                # FIXME: this code was copied from lib/wmiirc/config.rb
-
-                # expand ${...} in keyboard shortcuts
-                key = key.gsub(/\$\{(.+?)\}/) do
-                  CONFIG['control']['keyboard'][$1]
-                end
-
-                # other instances of this status bar applet may have already
-                # registered a handler for this keypress, so we skip this to
-                # avoid triggering the keypress handler multiple times!
-                unless Wmiirc.key? key
-                  Wmiirc.key(key) {|*argv| Wmiirc.action action_name }
-                end
+                Wmiirc.action "#{action_name}##{offset}", &handler
               end
             end
 
@@ -152,35 +143,23 @@ script:
         end
       end
 
-      # find all status bar applet definitions, which can
-      # be nested deeply in the display:status namespace
-      applets = []
-
-      find_applets = lambda do |name, definition|
-        if definition.respond_to? :key? and definition.key? 'label'
-          applets << [name, definition]
-        elsif definition.respond_to? :each_value
-          definition.each do |child_name, child_definition|
-            child_path = [name, child_name].compact.join(':')
-            find_applets.call child_path, child_definition
-          end
-        end
-      end
-
-      find_applets.call nil, CONFIG['display']['status']
-
-      # populate the status bar with applet instances
+  after:
+    - |
+      # populate the status bar with status barlet instances
       fs.rbar.clear
+      count_by_name = Hash.new {|h,k| h[k] = 0 }
 
-      applets.each_with_index do |(name, definition), position|
-        # TODO: recursive merge with override logging like Wmiirc::Config.merge()
-        instances = Array(definition['instances']).map {|h| definition.merge h }
+      Array(CONFIG['display']['status']).each_with_index do |hash, position|
+        raise ArgumentError unless hash.length == 1
+        name, instance = hash.first
+        instance ||= {}
 
-        # user did not specify any instances, so treat the status
-        # bar applet definition as an implicit singleton instance
-        instances << definition if instances.empty?
-
-        instances.each_with_index do |instance, offset|
-          StatusBarletSandbox.new name, instance, "#{position}-#{offset}"
+        unless definition = CONFIG['status'][name]
+          raise ArgumentError, "no such status barlet: #{name.inspect}"
         end
+
+        offset = count_by_name[name]
+        count_by_name[name] += 1
+
+        StatusBarletSandbox.new name, definition, instance, position, offset
       end

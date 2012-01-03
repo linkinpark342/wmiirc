@@ -1,0 +1,37 @@
+status:
+  music:
+    params:
+      client: rhythmbox-client --no-start
+      format: '(%ta) %at - %tt'
+
+    label: |
+      `#{@client} --print-playing-format #{@format.inspect}`.chomp
+
+    control:
+      action:
+        music_play!: |
+          system "#{@client} --play-pause"
+          refresh
+
+        music_pause: |
+          system "#{@client} --pause"
+          refresh
+
+        music_stop: |
+          system "#{@client} --stop"
+          refresh
+
+        music_next: |
+          system "#{@client} --next"
+          refresh
+
+        music_previous: |
+          system "#{@client} --previous"
+          refresh
+
+      mouse_action:
+        left_click: music_play!
+        right_click: music_stop
+        wheel_up: music_previous
+        wheel_down: music_next
+        wheel_click: music_menu

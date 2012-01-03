@@ -1,26 +1,26 @@
 control:
   action:
 
-    apply_equal_spacing_layout_to_current_column: |
+    layout_column_equal: |
       curr_area.layout = :default
 
-    apply_equal_spacing_layout_to_all_columns: |
+    layout_view_equal: |
       curr_view.columns.each do |a|
         a.layout = :default
       end
 
-    apply_stacked_layout_to_current_column: |
+    layout_column_stack: |
       curr_area.layout = :stack
 
-    apply_stacked_layout_to_all_columns: |
+    layout_view_stack: |
       curr_view.columns.each do |a|
         a.layout = :stack
       end
 
-    apply_maximized_layout_to_current_column: |
+    layout_column_max: |
       curr_area.layout = :max
 
-    apply_maximized_layout_to_all_columns: |
+    layout_view_max: |
       curr_view.columns.each do |a|
         a.layout = :max
       end

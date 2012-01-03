@@ -1,5 +1,6 @@
 script:
-  - before: |
+  before:
+    - |
       # Do not allow witray to be killed with Rumai::Client#kill.
       class Rumai::Client
         alias _e7ce5cfa_da6d_467f_837b_e9e738c0ee1b kill
@@ -16,8 +17,13 @@ script:
 control:
   action:
 
-    client_fullscreen_toggle: |
-      curr_client.fullscreen!
+    client_fullscreen!: curr_client.fullscreen!
 
-    kill_current_client: |
-      curr_client.kill
+    client_kill: curr_client.kill
+
+    # Show a list of clients, and if user selects one,
+    # tag it with the same tag as the current view.
+    client_invite_menu: |
+      if client = client_menu('invite client:', :client)
+        client.tag curr_tag
+      end

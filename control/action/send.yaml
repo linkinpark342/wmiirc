@@ -1,0 +1,49 @@
+control:
+  action:
+
+    send_group_up: |
+      grouping.each {|c| c.send(:up) rescue nil }
+
+    send_group_down: |
+      grouping.each {|c| c.send(:down) rescue nil }
+
+    send_group_left: |
+      grouping.each {|c| c.send(:left) rescue nil }
+
+    send_group_right: |
+      grouping.each {|c| c.send(:right) rescue nil }
+
+    send_group_overlay!: |
+      grouping.each {|c| c.send(:toggle) rescue nil }
+
+    send_group_view_menu: |
+      #
+      # Changes the tag (according to a menu choice) of
+      # each grouped client and returns the chosen tag.
+      #
+      # The +tag -tag idea is from Jonas Pfenniger:
+      #
+      #   http://zimbatm.oree.ch/articles/2006/06/15/wmii-3-and-ruby
+      #
+      choices = tags.map {|t| [t, "+#{t}", "-#{t}"] }.flatten
+
+      if target = key_menu(choices, 'tag as:', :tag)
+        grouping.each do |c|
+          case target
+          when /^\+/ then c.tag $'
+          when /^\-/ then c.untag $'
+          else c.tags = target
+          end
+        end
+      end
+
+    send_group_view_1: grouping.each {|c| c.tags = tags[0] || 1  }
+    send_group_view_2: grouping.each {|c| c.tags = tags[1] || 2  }
+    send_group_view_3: grouping.each {|c| c.tags = tags[2] || 3  }
+    send_group_view_4: grouping.each {|c| c.tags = tags[3] || 4  }
+    send_group_view_5: grouping.each {|c| c.tags = tags[4] || 5  }
+    send_group_view_6: grouping.each {|c| c.tags = tags[5] || 6  }
+    send_group_view_7: grouping.each {|c| c.tags = tags[6] || 7  }
+    send_group_view_8: grouping.each {|c| c.tags = tags[7] || 8  }
+    send_group_view_9: grouping.each {|c| c.tags = tags[8] || 9  }
+    send_group_view_0: grouping.each {|c| c.tags = tags[9] || 10 }
