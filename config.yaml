@@ -27,9 +27,7 @@ display:
       /^chromium:Chromium:Chromium Preferences$/ floating=on
       /^chromium:Chromium:Task Manager/ floating=on
       /^chromium:/ group=0
-      /^claws-mail:Claws-mail:Claws Mail [0-9]+\./ tags=mail
-      /^claws-mail:.+Compose message$/ floating=off
-      /^claws-mail:/ floating=on
+      /Mozilla Thunderbird$/ tags=mail
       /^firefox:/ group=0
       /^gimp:/ tags=gimp
       /^liferea:/ tags=feed
@@ -37,7 +35,6 @@ display:
       /^<nil>:<nil>:Event Tester$/ floating=on # xev
       /^pcmanfm:/ group=0
       /^pinentry/ floating=on
-      /^rdesktop:/ tags=doze floating=on
       /^skype:|^Pidgin:/ tags=chat allow=+activate
       /^sonata:/ tags=1 allow=+activate
       /Thunar:File Operation Progress/ floating=on
@@ -45,8 +42,7 @@ display:
       /^vncviewer:/ floating=on
       /^xmag:/ floating=on
       /^xmessage:/ floating=on tags=/./
-      /^xwrits:/ tags=/./
-      /^zim:/ tags=note
+      /^Spotify( Premium)? - Linux Preview/ tags=music
 
   refresh: 30
   status:
