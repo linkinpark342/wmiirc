@@ -7,7 +7,7 @@ import:
   - display/desktop/feh.yaml
 
 prefer:
-  terminal: gnome-terminal
+  terminal: urxvtcd
   browser: firefox
   editor: gvim
   filer: thunar
