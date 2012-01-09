@@ -71,7 +71,7 @@ display:
       /^vncviewer:/ floating=on
       /^xmag:/ floating=on
       /^xmessage:/ floating=on tags=/./
-      /^Spotify( Premium)? - Linux Preview/ tags=music
+      /^spotify:/ tags=music
 
   status:
     arrange:
