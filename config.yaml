@@ -56,7 +56,8 @@ display:
       /^chromium:Chromium:Chromium Preferences$/ floating=on
       /^chromium:Chromium:Task Manager/ floating=on
       /^chromium:/ group=0
-      /Mozilla Thunderbird$/ tags=mail
+      /^Mail:/ tags=mail
+      /^Eclipse:/ floating=off tags=eclipse
       /^firefox:/ group=0
       /^gimp:/ tags=gimp
       /^liferea:/ tags=feed
@@ -105,13 +106,14 @@ display:
 
 script:
   - after: |
-      launch 'witray'
-      launch 'killall clipit && clipit'
-      launch 'gnome-settings-daemon'
-      launch 'pidgin'
+      launch 'xscreensaver -nosplash'
+      launch 'killall -u amukherjee -0 witray || witray'
+      launch 'killall -u amukherjee -0 clipit || clipit'
+      launch 'killall -u amukherjee -0 gnome-settings-daemon || gnome-settings-daemon'
+      launch 'killall -u amukherjee -0 pidgin || pidgin'
       launch 'dropbox start'
       launch 'thunderbird'
-      launch '/home/amukherjee/bin/wallpaper.sh'
+      launch 'killall -u amukherjee -0 wallpaper.sh || /home/amukherjee/bin/wallpaper.sh'
 
 control:
   keyboard:
