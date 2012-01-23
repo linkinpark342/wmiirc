@@ -28,7 +28,8 @@ display:
       /^chromium:Chromium:Chromium Preferences$/ floating=on
       /^chromium:Chromium:Task Manager/ floating=on
       /^chromium:/ group=0
-      /Mozilla Thunderbird$/ tags=mail
+      /^Mail:/ tags=mail
+      /^Eclipse:/ floating=off tags=eclipse
       /^firefox:/ group=0
       /^gimp:/ tags=gimp
       /^liferea:/ tags=feed
