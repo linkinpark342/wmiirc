@@ -45,12 +45,13 @@ configuration was also described in the following articles in the past:
 Prerequisites
 ------------------------------------------------------------------------------
 
-  * [wmii] 3.9 or newer.
+  * [wmii] 3.9 or newer.  I recommend [my personal branch of wmii-hg](
+    https://github.com/sunaku/wmii/commits/personal ) for best results.
 
     Note that the `display/status/arrange` status bar applet requires a
     [patched version of wmii-hg revision 2758 or greater](
-    http://code.google.com/p/wmii/issues/detail?id=232 ) in order to *persist*
-    automated client arrangements.
+    https://github.com/sunaku/wmii/commit/33bf199436213788078581a8a94c2dcc98d6af16
+    ) in order to *persist* automated client arrangements.
 
   * [Ruby] 1.9.2 or newer.
 
@@ -66,6 +67,10 @@ Prerequisites
   * [Kwalify] 0.7.2 or newer:
 
         gem install kwalify -v '>= 0.7.2'
+
+  * If you want to use the `status/weather.yaml` status bar applet:
+
+        gem install barometer -v '~> 0.7.3'
 
 ------------------------------------------------------------------------------
 Installing
@@ -136,7 +141,7 @@ persisted across multiple instances of the wmiirc.
             - yet_another_gem: ['>= 1.0.9', '< 2']
             - some_ruby_library
 
-  * **script:** Arbitrary logic to evaulate while processing this file.
+  * **script:** Arbitrary logic to evaluate while processing this file.
 
     * **before:** Array of Ruby code snippets to evaulate before processing
       the overall configuration.
@@ -148,7 +153,9 @@ persisted across multiple instances of the wmiirc.
 
       All Ruby code snippets that are evaluated inside a `Wmiirc::Status`
       object have access to a `refresh` method that triggers redrawing of
-      the label of that status bar applet.
+      the label of that status bar applet.  They also have access to a `@id`
+      variable which is a sequence number counting the number of instances of
+      this particular status bar applet that have been created thus far.
 
       * **_name of the status bar applet that you want to define_:**
 
@@ -209,7 +216,9 @@ persisted across multiple instances of the wmiirc.
 
         All Ruby code snippets that are evaluated inside a `Wmiirc::Status`
         object have access to a `refresh` method that triggers redrawing of
-        the label of that status bar applet.
+        the label of that status bar applet.  They also have access to a `@id`
+        variable which is a sequence number counting the number of instances
+        of this particular status bar applet that have been created thus far.
 
         * **- _name of the status bar applet that you want to instantiate_:**
 

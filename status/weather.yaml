@@ -5,12 +5,11 @@ status:
   weather:
     params:
       location:
-
-    script: |
-      @barometer = Barometer.new(@location)
+      metric: 
 
     label: |
-      @weather = @barometer.measure
+      barometer = Barometer.new(@location)
+      @weather = barometer.measure
       status = @weather.current.icon
 
       icon =
@@ -23,7 +22,7 @@ status:
         else "\u2600"
         end
 
-      temperature = @weather.temperature.to_s.tr('CF', "\u2103\u2109")
+      temperature = @weather.temperature.to_s(@metric).tr('CF', "\u2103\u2109")
 
       [icon, temperature, status]
 

@@ -19,15 +19,15 @@ module Import
       end
 
       mark_origin data, path, origins
-      expand data, path, origins, imported
+      expand result, data, path, origins, imported
       merge result, data, path, origins
     end
 
     result
   end
 
-  def expand result, src_file, origins={}, imported={}
-    Array(result['import']).each do |virtual_path|
+  def expand result, src_data, src_file, origins={}, imported={}
+    Array(src_data['import']).each do |virtual_path|
       physical_path = File.join(DIR, virtual_path)
       import result, Dir[physical_path], origins, imported, src_file
     end
@@ -80,7 +80,12 @@ module Import
 private
 
   def mark_origin data, origin, result
-    result[data] = origin
+    result[data] =
+      if result.key? data
+        Array(result[data]).push(origin).uniq
+      else
+        origin
+      end
 
     if data.respond_to? :each
       data.each do |*values|
