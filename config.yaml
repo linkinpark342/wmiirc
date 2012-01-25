@@ -1,6 +1,5 @@
 import:
   - status/*.yaml
-  - status/music/mpd.yaml
   - control/*.yaml
   - control/action/*.yaml
   - display/*.yaml
@@ -19,6 +18,7 @@ display:
       /.*/ -> 50+50
   client:
     rule: |
+      /^wimenu:|^wmii9menu:/ tags=/./
       /^xmessage:/ tags=/./ floating=on
       /^xwrits:/ tags=/./
       /^xfce4-notifyd:/ tags=/./
@@ -61,21 +61,29 @@ display:
         control:
           action:
             show_desktop: focus_view '...'
+            status_refresh: $status_barlets.each(&:refresh)
           mouse_action:
             right_click: show_desktop
             wheel_up: focus_view_next
             wheel_down: focus_view_previous
+            wheel_click: status_refresh
     - arrange:
         params:
+          default: landscape
           choices:
+            landscape: |
+              a = columns.first
+              if a.exist? and a.length == 2 and a.next.floating?
+                a.length = 1
+              end
+
             right_stack: |
               tile_right
-              managed_areas.last.layout = :stack
+              columns.last.layout = :stack
     - weather:
         refresh: 300 # 5 minutes
         params:
           location: SJC
-    - music:
     - volume:
         params:
           mixer: Master
@@ -85,14 +93,11 @@ display:
     #- network:
         #params:
           #interface: wlan0
-    #- network:
-        #params:
-          #interface: eth0
-    - thermal:
+    - network:
+        params:
+          interface: eth0
     #- memory:
     - loadavg:
-    - battery:
-    - pomodoro:
     - clock:
         params:
           format: '%l:%M%P %a %m/%d'
@@ -164,9 +169,7 @@ control:
   keyboard_action:
     XF86Display:              negative
     ${root}x:                 terminal
-    ${root}k:                 browser
-    ${root}j:                 filer
-    ${root}q:                 editor
+    ${root}i:                 browser
 
     #-------------------------------------------------------------------------
     # basic
@@ -181,7 +184,7 @@ control:
 
     ${root}a:                 focus_client_menu
     ${root}Shift-a:           client_invite_menu
-    ${root}c:                 client_fullscreen!
+    ${root}f:                 client_fullscreen!
 
     ${root}${up}:             focus_client_up
     ${root}${down}:           focus_client_down
@@ -204,9 +207,9 @@ control:
     ${send}${left}:           send_group_left
     ${send}${right}:          send_group_right
 
-    ${send}v:                 send_group_view_menu
+    ${send}t:                 send_group_view_menu
     ${send}space:             send_group_overlay!
-    ${send}Delete:            group_kill
+    ${send}c:                 group_kill
 
     ${send}1:                 send_group_view_1
     ${send}2:                 send_group_view_2
@@ -293,9 +296,9 @@ control:
     # layout
     #-------------------------------------------------------------------------
 
-    ${layout}w:               layout_column_equal
-    ${layout}v:               layout_column_stack
-    ${layout}m:               layout_column_max
+    ${layout}n:               layout_column_equal
+    ${layout}m:               layout_column_stack
+    ${layout}comma:               layout_column_max
 
     ${layout}Shift-w:         layout_view_equal
     ${layout}Shift-v:         layout_view_stack
