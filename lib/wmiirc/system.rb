@@ -1,18 +1,32 @@
-require 'pathname'
-
 module Wmiirc
+
+  ##
+  # Runs {#launch!} inside the present working directory of the
+  # currently focused client or, if undeterminable, that of wmii.
+  #
+  def launch *args
+    if label = curr_client.label.read rescue nil
+      label.split(/[\s\[\]\{\}\(\)<>"':]+/).each do |word|
+        if File.exist? path = File.expand_path(word)
+          path = File.dirname(path) unless File.directory? path
+          Dir.chdir(path){ launch! *args }
+          return
+        end
+      end
+    end
+
+    launch! *args
+  end
 
   ##
   # Launches the given command in the background.
   #
-  # ==== Parameters
-  #
-  # [command]
+  # @param [String] command
   #   The name or path to the program you want
   #   to launch.  This can be a self-contained
   #   shell command if no arguments are given.
   #
-  # [arguments_then_wihack_options]
+  # @param arguments_then_wihack_options
   #   Command-line arguments for the command being launched,
   #   optionally followed by a Hash containing command-line
   #   option names and values for the `wihack` program.
@@ -32,9 +46,9 @@ module Wmiirc
   # Launch a command on the floating layer (treating
   # it as a dialog box) using the `wihack` program:
   #
-  #   launch 'xmessage', 'hello world', Time.now.to_s, :type => 'DIALOG'
+  #   launch 'xmessage', 'hello world', Time.now.to_s, type: 'DIALOG'
   #
-  def launch command, *arguments_then_wihack_options
+  def launch! command, *arguments_then_wihack_options
     *arguments, wihack_options = arguments_then_wihack_options
 
     unless wihack_options.nil? or wihack_options.kind_of? Hash
@@ -60,23 +74,21 @@ module Wmiirc
   # This is a "fire and forget" operation.  The result of
   # the notification command is NOT returned by this method!
   #
-  # ==== Parameters
-  #
-  # [title]
+  # @param title
   #   The title to be displayed.
   #
-  # [message]
+  # @param message
   #   The message to be displayed.
   #
-  # [icon]
+  # @param icon
   #   The icon to be displayed.
   #
-  # [arguments]
+  # @param arguments
   #   Additional command-line arguments for `notify-send`.
   #
   def notify title, message, icon='dialog-information', *arguments
     Rumai.fs.event.write "Notice #{title}: #{message}\n"
-    launch 'notify-send', '-i', icon, title, message, *arguments
+    launch! 'notify-send', '-i', icon, title, message, *arguments
   end
 
   ##
@@ -85,25 +97,14 @@ module Wmiirc
   # This is a "fire and forget" operation.  The result of
   # the launched dialog box is NOT returned by this method!
   #
-  # ==== Parameters
-  #
-  # [message]
+  # @param message
   #   The message to be displayed.
   #
-  # [arguments]
+  # @param arguments
   #   Additional command-line arguments for `xmessage`.
   #
   def dialog message, *arguments
-    launch 'xmessage', '-nearmouse', *arguments, message, :type => 'DIALOG'
-  end
-
-  ##
-  # Returns the basenames of executable files found in the given directories.
-  #
-  def find_programs *directories
-    directories.flatten.
-    map {|d| Pathname.new(d).expand_path.children rescue [] }.flatten.
-    map {|f| f.basename.to_s if f.file? and f.executable? }.compact.uniq.sort
+    launch! 'xmessage', '-nearmouse', *arguments, message, type: 'DIALOG'
   end
 
 end

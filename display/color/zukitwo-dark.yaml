@@ -1,0 +1,7 @@
+# Colors from the Zukitwo-Dark GTK+ theme.
+# http://lassekongo83.deviantart.com/art/Zukitwo-203936861
+display:
+  color:
+    desktop: "#3c3c3c"
+    normal:  "#e6e6e6 #4c4c4c #464646"
+    focus:   "#2c2c2c #c9c9c9 #a2a2a2"
