@@ -105,7 +105,7 @@ class << self
 
   def load_user_config
     config = Config.new(CONFIG_FILE)
-    File.write CONFIG_DUMP_FILE, config.to_yaml
+    File.open(CONFIG_DUMP_FILE, "w") { |f| f << config.to_yaml }
 
     errors = CONFIG_VALIDATOR.validate(config)
     if errors and not errors.empty?
