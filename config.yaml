@@ -38,6 +38,7 @@ display:
 
       /^skype:/ tags=chat allow=+activate
       /^Pidgin:/ tags=chat allow=+activate
+      /^Mail:/ tags=mail
 
       /^liferea:/ tags=feed
 
@@ -48,10 +49,8 @@ display:
       /^zim:/ tags=note
 
       /^rdesktop:/ tags=work floating=on
-
-      /^chromium:Chromium:Chromium Preferences$/ floating=on
-      /^chromium:Chromium:Task Manager/ floating=on
-      /^chromium:/ group=0
+      /^google-chrome:/ floating=off
+      /^chromium-browser:/ floating=off
 
       /^firefox:/ group=0
 
@@ -108,9 +107,10 @@ control:
   action:
     negative: launch! 'xcalib -invert -alter'
     terminal: launch 'urxvtcd'
-    browser:  launch 'firefox'
+    browser:  launch 'google-chrome'
     filer:    launch 'thunar'
     editor:   launch 'gvim'
+    nein:     launch '/home/amukherjee/bin/nein'
 
     desktop: | # dock laptop to my desk
       system 'xrandr --output HDMI1 --auto --output LVDS1 --off --dpi 96'
@@ -171,7 +171,8 @@ control:
   keyboard_action:
     XF86Display:              negative
     ${root}x:                 terminal
-    ${root}i:                 browser
+    ${root}b:                 browser
+    F9:                       nein
 
     #-------------------------------------------------------------------------
     # basic
@@ -254,7 +255,7 @@ control:
     ${root}comma:             focus_view_previous
     ${root}period:            focus_view_next
     ${root}o:                 focus_view_recent
-    ${root}u:                 focus_view_menu
+    ${root}t:                 focus_view_menu
 
     ${root}1:                 focus_view_1
     ${root}2:                 focus_view_2
@@ -298,13 +299,13 @@ control:
     # layout
     #-------------------------------------------------------------------------
 
-    ${layout}n:               layout_column_equal
-    ${layout}m:               layout_column_stack
-    ${layout}comma:               layout_column_max
+    ${layout}m:               layout_column_equal
+    ${layout}comma:               layout_column_stack
+    ${layout}period:               layout_column_max
 
-    ${layout}Shift-w:         layout_view_equal
-    ${layout}Shift-v:         layout_view_stack
-    ${layout}Shift-m:         layout_view_max
+    ${layout}Shift-m:         layout_view_equal
+    ${layout}Shift-comma:         layout_view_stack
+    ${layout}Shift-period:         layout_view_max
 
     ${layout}r:               arrange_right
     ${layout}Control-r:       arrange_right_persist
@@ -374,3 +375,13 @@ control:
     ${size}Return:            music_play!
     ${size}Home:              music_playlist_menu
     ${size}End:               music_favorite_menu
+
+#- script:
+#  - after: |
+#      launch 'killall -u amukherjee -0 gnome-settings-daemon || gnome-settings-daemon'
+#      launch 'killall -u amukherjee -0 clipit || clipit'
+#      launch 'killall -u amukherjee -0 pidgin || pidgin'
+#      launch 'dropbox start'
+#      launch 'thunderbird'
+#      launch 'killall -u amukherjee -0 wallpaper.sh || /home/amukherjee/bin/wallpaper.sh'
+
