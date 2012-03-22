@@ -1,0 +1,64 @@
+require:
+  - dbus
+
+status:
+  music:
+    script: |
+      def get_info
+        @obj = nil
+        bus = DBus::SessionBus.instance
+        return if not bus
+        @obj = bus.service('org.mpris.MediaPlayer2.spotify').object('/org/mpris/MediaPlayer2')
+        return if not @obj
+        begin
+          @obj.introspect
+        rescue DBus::Error
+          @player = nil
+          return
+        end
+        @player = @obj['org.mpris.MediaPlayer2.Player']
+      end
+    label: |
+      if not @obj or not @player
+        get_info()
+      end
+
+      if not @obj or not @player
+        return
+      end
+      if @player['PlaybackStatus'] == 'Paused'
+        return "\u275A\u275A"
+      end
+      data = @player['Metadata']
+      return "No data" if not data
+      return "No data" if not data['xesam:artist']
+      data['xesam:artist'] + [' - ', data['xesam:title']]
+
+    control:
+      action:
+        music_play!: |
+          @player.PlayPause if @player
+          refresh
+
+        music_pause: |
+          @player.Pause if @player
+          refresh
+
+        music_stop: |
+          @player.Stop if @player
+          refresh
+
+        music_next: |
+          @player.Next if @player
+          refresh
+
+        music_previous: |
+          @player.Previous if @player
+          refresh
+
+      mouse_action:
+        left_click: music_play!
+        right_click: music_stop
+#        wheel_up: music_previous
+#        wheel_down: music_next
+#        wheel_click: music_menu

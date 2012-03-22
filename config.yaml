@@ -1,5 +1,6 @@
 import:
   - status/*.yaml
+  - status/music/spotify.yaml
   - control/*.yaml
   - control/action/*.yaml
   - display/*.yaml
@@ -42,7 +43,7 @@ display:
 
       /^liferea:/ tags=feed
 
-      /^gimp:/ tags=gimp
+      /^gimp:/ tags=gimp floating=on
 
       /^claws-mail:/ tags=mail
 
@@ -68,6 +69,7 @@ display:
             wheel_up: focus_view_next
             wheel_down: focus_view_previous
             wheel_click: status_refresh
+    - music:
     - arrange:
         params:
           default: landscape
@@ -88,9 +90,9 @@ display:
     - volume:
         params:
           mixer: Master
-    #- disk:
-        #params:
-          #path: $HOME
+    - disk:
+        params:
+          path: /
     #- network:
         #params:
           #interface: wlan0
@@ -99,9 +101,22 @@ display:
           interface: eth0
     #- memory:
     - loadavg:
+        params:
+          critical: 8.0
+          high: 5.0
     - clock:
         params:
           format: '%l:%M%P %a %m/%d'
+        control:
+          action:
+            time_month_calendar: |
+              dialog `cal -h`.sub(/\b#{Time.now.day}\b/) {|s| '*' * s.length}
+            time_year_calendar: |
+              dialog `cal -y -h`.sub(/^.*$/) {|line| Date.today.to_s.center(line.length) }
+
+script:
+  after: |
+    launch '/home/amukherjee/bin/wallpaper.sh'
 
 control:
   action:
