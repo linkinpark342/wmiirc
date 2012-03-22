@@ -3,12 +3,14 @@ require:
 
 status:
   music:
+    params:
+      dbus_service: org.mpris.MediaPlayer2.spotify
     script: |
       def get_info
         @obj = nil
         bus = DBus::SessionBus.instance
         return if not bus
-        @obj = bus.service('org.mpris.MediaPlayer2.spotify').object('/org/mpris/MediaPlayer2')
+        @obj = bus.service(@dbus_service).object('/org/mpris/MediaPlayer2')
         return if not @obj
         begin
           @obj.introspect
