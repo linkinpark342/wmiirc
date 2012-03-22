@@ -13,7 +13,7 @@ control:
     clear: |
       # these browsers' "restore session" feature does
       # not work unless the whole process group is killed
-      system 'killall', 'opera',
+      system 'killall', 'opera', 'chrome',
         'chromium', 'chromium-browser',
         'firefox', 'firefox-bin',
         'thunderbird', 'thunderbird-bin'
