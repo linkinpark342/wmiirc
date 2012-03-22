@@ -187,6 +187,7 @@ control:
     XF86Display:              negative
     ${root}x:                 terminal
     ${root}b:                 browser
+    ${root}Shift-Home:        music_play!
     F9:                       nein
 
     #-------------------------------------------------------------------------
