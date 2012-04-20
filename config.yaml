@@ -184,7 +184,6 @@ control:
     XF86Display:              negative
     ${root}x:                 terminal
     ${root}b:                 browser
-    ${root}Shift-Home:        music_play!
     F9:                       nein
 
     #-------------------------------------------------------------------------
@@ -349,10 +348,10 @@ control:
     #-------------------------------------------------------------------------
 
     ${group}g:                group_client!
-    ${group}a:                group_area!
-    ${group}c:                group_columns!
-    ${group}o:                group_overlay!
-    ${group}v:                group_view!
+    ${group}c:                group_area!
+    ${group}a:                group_columns!
+    ${group}space:                group_overlay!
+    ${group}t:                group_view!
     ${group}w:                group_all!
     ${group}n:                ungroup_all
 
@@ -372,7 +371,6 @@ control:
 
     ${send}Prior:             volume_more
     ${send}Next:              volume_less
-    ${send}Return:            volume_mute!
 
     #-------------------------------------------------------------------------
     # music
@@ -383,11 +381,9 @@ control:
     XF86AudioNext:            music_next
     XF86AudioStop:            music_stop
 
-    ${size}Prior:             music_previous
-    ${size}Next:              music_next
     ${size}Return:            music_play!
-    ${size}Home:              music_playlist_menu
-    ${size}End:               music_favorite_menu
+    ${size}Home:              music_previous
+    ${size}End:               music_next
 
 #- script:
 #  - after: |
