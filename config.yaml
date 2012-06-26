@@ -96,7 +96,7 @@ display:
     - network:
         params:
           interface: eth0
-    #- memory:
+    - memory:
     - loadavg:
         params:
           critical: 8.0
@@ -114,6 +114,7 @@ display:
 script:
   after: |
     launch '/home/amukherjee/bin/wallpaper.sh'
+    launch 'xcompmgr -cC -r 0'
 
 control:
   action:
@@ -358,8 +359,8 @@ control:
     ${size}2:                 zoom_group
     ${size}1:                 unzoom_group
 
-    ${size}0:                 detach_group
-    ${size}9:                 attach_client
+    #${size}0:                 detach_group
+    #${size}9:                 attach_client
 
     #-------------------------------------------------------------------------
     # volume
