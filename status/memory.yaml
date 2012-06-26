@@ -11,7 +11,8 @@ status:
 
         def sample!
           reading = `free -m`
-          total, @used, @free = reading[/Mem:(.+)/, 1].split.map(&:to_f)
+          total = reading[/Mem:(.+)/, 1].split[0].to_f
+          @used, @free = reading[/-\/\+ buffers\/cache:(.+)/, 1].split.map(&:to_f)
           @swap = reading[/Swap:(.+)/, 1].split[1]
         end
 
