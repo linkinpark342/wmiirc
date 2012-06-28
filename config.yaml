@@ -47,8 +47,8 @@ display:
       /^spotify:/ tags=music
 
       /^rdesktop:/ tags=work floating=on
-      /^google-chrome:/ floating=off
-      /^chromium-browser:/ floating=off
+      /^google-chrome:/ floating=off group=0
+      /^chromium-browser:/ floating=off group=0
 
       /^firefox:/ group=0
 
